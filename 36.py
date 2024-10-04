@@ -5,6 +5,7 @@ class UnionFind:
         self.parent = [i for i in range(n + 1)]
         self.rank = [0] * (n + 1)
         self.count = [0] * (n + 1)
+        self.zero_used = False
 
     def find(self, x):
         if x != self.parent[x]:
@@ -14,41 +15,47 @@ class UnionFind:
     def union(self, x, y):
         parent_x = self.find(x)
         parent_y = self.find(y)
-    
+
         if parent_x == parent_y:
             return False
-    
+
         if self.rank[parent_x] > self.rank[parent_y]:
             self.parent[parent_y] = parent_x
-            if parent_y < parent_x or parent_y < self.count[parent_y]:
+            if parent_y < parent_x or parent_x < self.count[parent_x]:
                 self.count[parent_x] += self.count[parent_y]
-        
+
         elif self.rank[parent_x] < self.rank[parent_y]:
             self.parent[parent_x] = parent_y
-            if parent_x < parent_y or parent_x < self.count[parent_x]:
+            if parent_x < parent_y or parent_y < self.count[parent_y]:
                 self.count[parent_y] += self.count[parent_x]
-        
+
         else:
             self.parent[parent_y] = parent_x
             self.rank[parent_x] += 1
-            if parent_x < parent_y or parent_x < self.count[parent_x]:
+            if parent_x < parent_y or parent_y < self.count[parent_y]:
                 self.count[parent_y] += self.count[parent_x]
-    
+
         return True
 
     def get_quick(self, x):
         parent_x = self.find(x)
 
-        while True:
-            new_x = (parent_x - self.count[parent_x]) % len(self.parent)
-            parent_new_x = self.find(new_x)
+        if parent_x == 0 and self.zero_used:
+            return -1
 
-            if self.count[parent_new_x] == 0:
-                self.count[parent_new_x] += 1
-                return parent_new_x
+        new_x = (parent_x - self.count[parent_x]) % len(self.parent)
+        parent_new_x = self.find(new_x)
 
-            self.union(parent_x, parent_new_x)
-            return self.get_quick(self.find(parent_new_x))
+        if parent_new_x == 0:
+            self.zero_used = True
+            return 0
+
+        if self.count[parent_new_x] == 0:
+            self.count[parent_new_x] += 1
+            return parent_new_x
+
+        self.union(parent_x, parent_new_x)
+        return self.get_quick(self.find(parent_new_x))
 
 def scheduling(tasks):
     tasks.sort(key=lambda t: (-t[1], t[0]))
@@ -56,7 +63,7 @@ def scheduling(tasks):
     uf = UnionFind(max_deadline)
     schedule = [None] * max_deadline
     total_fine = 0
-    
+
     for deadline, fine in tasks:
         parent = uf.find(deadline)
         free_day = uf.get_quick(parent)
@@ -69,19 +76,24 @@ def scheduling(tasks):
 
     return total_fine
 
+
 class TestScheduling(unittest.TestCase):
 
     def test1(self):
-        arr = [(3, 25), (4, 10), (1, 30), (3, 50), (3, 20)] # жадное: 25+20
+        arr = [(3, 25), (4, 10), (1, 30), (3, 50), (3, 20)] # жадное: 30
         self.assertEqual(scheduling(arr), 20)
-    
+
     def test2(self):
-        arr = [(1, 10), (2, 20), (3, 30), (4, 40), (4, 50)] # жадное: 40
+        arr = [(1, 10), (2, 20), (3, 30), (4, 40), (4, 50)] # жадное: 30
         self.assertEqual(scheduling(arr), 10)
 
     def test3(self):
-        arr = [(4, 40), (2, 10), (3, 25), (3, 30), (1, 20)] # жадное: 25
+        arr = [(4, 40), (2, 10), (3, 25), (3, 30), (1, 20)] # жадное: 30
         self.assertEqual(scheduling(arr), 10)
+
+    def test4(self):
+        arr = [(1, 10), (2, 10), (3, 10), (4,10), (5,10), (6,10), (9, 10), (9, 15), (9, 15), (9, 15), (10, 5), (10, 10)] # жадное: 30
+        self.assertEqual(scheduling(arr), 15)
 
 if __name__ == "__main__":
     unittest.main()
