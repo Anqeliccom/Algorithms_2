@@ -5,7 +5,6 @@ class UnionFind:
         self.parent = [i for i in range(n + 1)]
         self.rank = [0] * (n + 1)
         self.count = [0] * (n + 1)
-        self.zero_used = False
 
     def find(self, x):
         if x != self.parent[x]:
@@ -20,34 +19,27 @@ class UnionFind:
             return False
 
         if self.rank[parent_x] > self.rank[parent_y]:
-            self.parent[parent_y] = parent_x
-            if parent_y < parent_x or parent_x < self.count[parent_x]:
-                self.count[parent_x] += self.count[parent_y]
-
+            self.update_p_c(parent_y, parent_x)
         elif self.rank[parent_x] < self.rank[parent_y]:
-            self.parent[parent_x] = parent_y
-            if parent_x < parent_y or parent_y < self.count[parent_y]:
-                self.count[parent_y] += self.count[parent_x]
-
+            self.update_p_c(parent_x, parent_y)
         else:
-            self.parent[parent_y] = parent_x
             self.rank[parent_x] += 1
-            if parent_x < parent_y or parent_y < self.count[parent_y]:
-                self.count[parent_y] += self.count[parent_x]
+            self.update_p_c(parent_y, parent_x)
 
         return True
 
+    def update_p_c(self, child, parent):
+        self.parent[child] = parent
+        if child < parent or parent < self.count[parent]:
+            self.count[parent] += self.count[child]
+
     def get_quick(self, x):
         parent_x = self.find(x)
-
-        if parent_x == 0 and self.zero_used:
-            return -1
 
         new_x = (parent_x - self.count[parent_x]) % len(self.parent)
         parent_new_x = self.find(new_x)
 
         if parent_new_x == 0:
-            self.zero_used = True
             return 0
 
         if self.count[parent_new_x] == 0:
@@ -97,3 +89,4 @@ class TestScheduling(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
