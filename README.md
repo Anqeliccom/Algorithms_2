@@ -6,3 +6,4 @@
 - task-5 [Dungeon Game](https://leetcode.com/submissions/detail/1413765514/)
 - task-6 [Regular Expression Matching](https://leetcode.com/accounts/login/?next=/submissions/detail/1434086654/)
 - task-7 [Minimum Cost to Merge Stones](https://leetcode.com/accounts/login/?next=/submissions/detail/1434230988/)
+- task-8 [Find the City With the Smallest Number of Neighbors at a Threshold Distance](https://leetcode.com/accounts/login/?next=/submissions/detail/1434449280/)
