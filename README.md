@@ -7,3 +7,4 @@
 - task-6 [Regular Expression Matching](https://leetcode.com/accounts/login/?next=/submissions/detail/1434086654/)
 - task-7 [Minimum Cost to Merge Stones](https://leetcode.com/accounts/login/?next=/submissions/detail/1434230988/)
 - task-8 [Find the City With the Smallest Number of Neighbors at a Threshold Distance](https://leetcode.com/accounts/login/?next=/submissions/detail/1434449280/)
+- task-9 [Range Sum Query - Mutable](https://leetcode.com/accounts/login/?next=/submissions/detail/1443420339/)
