@@ -10,9 +10,15 @@ class ImplicitTreapNode:
         self.left = None
         self.right = None
 
+    def get_size(self, node):
+        return node.size if node else 0
+
+    def get_sum(self, node):
+        return node.sum if node else 0
+
     def update(self):
-        self.size = 1 + (self.left.size if self.left else 0) + (self.right.size if self.right else 0)
-        self.sum = self.val + (self.left.sum if self.left else 0) + (self.right.sum if self.right else 0)
+        self.size = 1 + self.get_size(self.left) + self.get_size(self.right)
+        self.sum = self.val + self.get_sum(self.left) + self.get_sum(self.right)
 
 class ImplicitTreap:
     def __init__(self):
@@ -21,12 +27,12 @@ class ImplicitTreap:
     def split_by_size(self, root, k):
         if not root:
             return None, None
-        if k <= (root.left.size if root.left else 0):
+        if k <= root.get_size(root.left):
             left, root.left = self.split_by_size(root.left, k)
             root.update()
             return left, root
         else:
-            root.right, right = self.split_by_size(root.right, k - (root.left.size if root.left else 0) - 1)
+            root.right, right = self.split_by_size(root.right, k - root.get_size(root.left) - 1)
             root.update()
             return root, right
 
@@ -62,7 +68,7 @@ class ImplicitTreap:
     def sum(self, frm, to):
         root1, root2 = self.split_by_size(self.root, frm)
         root2, root3 = self.split_by_size(root2, to - frm + 1)
-        res = root2.sum if root2 else 0
+        res = root2.get_sum(root2)
         self.root = self.merge(self.merge(root1, root2), root3)
         return res
 
